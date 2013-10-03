@@ -22,15 +22,15 @@
  * THE SOFTWARE.
  */
 
-function createDeleteMarkup(output, space, index, escape) {
-	return "<del>" + escape(output[index]) + space[index] + "</del>";
+function createMarkupGenerator( type ) {
+  var tag = type === "ins" ? "ins" : "del";
+
+  return function ( output, space, index, escape ) {
+    return "<" + tag + ">" + escape(output[index]) + space[index] + "</" + tag + ">";
+  };
 }
 
-function createInsertMarkup(output, space, index, escape) {
-	return "<ins>" + escape(output[index]) + space[index] + "</ins>";
-}
-
-function diffString( o, n, del, ins ) {
+function diffString( o, n, ins, del ) {
 	o = o.replace(/\s+$/, '');
   	n = n.replace(/\s+$/, '');
 
@@ -132,14 +132,14 @@ function diff( o, n ) {
 }
 
 
-module.exports = function ( o, n, del, ins ) {
-  if (!del) {
-    del = createDeleteMarkup;
-  }
-
+module.exports = function ( o, n, ins, del ) {
   if (!ins) {
-    ins = createInsertMarkup;
+    ins = createMarkupGenerator("ins");
   }
 
-  return diffString(o, n, del, ins);
+  if (!del) {
+    del = createMarkupGenerator("del");
+  }
+
+  return diffString(o, n, ins, del);
 };
