@@ -22,8 +22,15 @@
  * THE SOFTWARE.
  */
 
+function createDeleteMarkup(output, space, index, escape) {
+	return "<del>" + escape(output[index]) + space[index] + "</del>";
+}
 
-function diffString( o, n ) {
+function createInsertMarkup(output, space, i) {
+	return "<ins>" + escape(output[index]) + space[index] + "</ins>";
+}
+
+function diffString( o, n, del, ins ) {
 	o = o.replace(/\s+$/, '');
   	n = n.replace(/\s+$/, '');
 
@@ -46,23 +53,23 @@ function diffString( o, n ) {
 
   	if (out.n.length == 0) {
     	for (var i = 0; i < out.o.length; i++) {
-        	str += '<del>' + escape(out.o[i]) + oSpace[i] + "</del>";
-      	}
+				str += del(out.o, oSpace, i, escape);
+      }
   	} else {
     	if (out.n[0].text == null) {
       		for (n = 0; n < out.o.length && out.o[n].text == null; n++) {
-        		str += '<del>' + escape(out.o[n]) + oSpace[n] + "</del>";
+						str += del(out.o, oSpace, n, escape);
       		}
     	}
 
     	for ( var i = 0; i < out.n.length; i++ ) {
       		if (out.n[i].text == null) {
-        		str += '<ins>' + escape(out.n[i]) + nSpace[i] + "</ins>";
+						str += ins(out.n, nSpace, i, escape);
       		} else {
         		var pre = "";
 
         		for (n = out.n[i].row + 1; n < out.o.length && out.o[n].text == null; n++ ) {
-          			pre += '<del>' + escape(out.o[n]) + oSpace[n] + "</del>";
+							pre += del(out.o, oSpace, n, escape);
         		}
         		str += " " + out.n[i].text + nSpace[i] + pre;
       		}
@@ -125,4 +132,14 @@ function diff( o, n ) {
 }
 
 
-module.exports = diffString;
+module.exports = function ( o, n, del, ins ) {
+  if (!del) {
+    del = createDeleteMarkup;
+  }
+
+  if (!ins) {
+    ins = createInsertMarkup;
+  }
+
+  return diffString(o, n, del, ins);
+};
