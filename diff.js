@@ -22,9 +22,7 @@
  * THE SOFTWARE.
  */
 
-function createMarkupGenerator( type ) {
-  var tag = type === "ins" ? "ins" : "del";
-
+function createMarkupGenerator( tag ) {
   return function ( output, space, index, escape ) {
     return "<" + tag + ">" + escape(output[index]) + space[index] + "</" + tag + ">";
   };
