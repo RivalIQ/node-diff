@@ -26,7 +26,7 @@ function createDeleteMarkup(output, space, index, escape) {
 	return "<del>" + escape(output[index]) + space[index] + "</del>";
 }
 
-function createInsertMarkup(output, space, i) {
+function createInsertMarkup(output, space, index, escape) {
 	return "<ins>" + escape(output[index]) + space[index] + "</ins>";
 }
 
